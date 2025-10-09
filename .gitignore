@@ -1,20 +1,16 @@
-venv/
-.env/
-
+# Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.env
 
+# Data files (если они большие)
 *.csv
-*.xlsx
-*.xls
-*.pdf
-*.docx
-
-.ipynb_checkpoints/
-.DS_Store
-Thumbs.db
-
-.vscode/
-.idea/
+*.json
+*.pkl
+*.h5
