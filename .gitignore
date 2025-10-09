@@ -10,7 +10,6 @@ venv/
 .env
 
 # Data files (если они большие)
-*.csv
 *.json
 *.pkl
 *.h5
