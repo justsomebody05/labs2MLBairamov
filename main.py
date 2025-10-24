@@ -9,7 +9,7 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix
 )
-from sklearn.preprocessing import LabelEncoder, StandardScaler, PolynomialFeatures
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler, PolynomialFeatures
 from sklearn.impute import SimpleImputer
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -32,10 +32,10 @@ for feature in categorical_features:
 print()
 print(df.isnull().sum())
 
-label_encoders = {}
-for feature in ['HomePlanet', 'CryoSleep', 'Destination', 'VIP']:
-    le = LabelEncoder()
-    df[feature] = le.fit_transform(df[feature].astype(str))
+label_encoders = {} 
+for feature in categorical_features: 
+    le = LabelEncoder() 
+    df[feature] = le.fit_transform(df[feature].astype(str)) 
     label_encoders[feature] = le
 
 features = ['HomePlanet', 'Destination', 'CryoSleep', 'VIP', 
@@ -125,7 +125,7 @@ print(f"ridge RMSE: {ridge_rmse:.2f}")
 print()
 
 
-lasso = Lasso(alpha=0.1)
+lasso = Lasso(alpha=0.1, max_iter = 5000)
 lasso.fit(X_train_reg_scaled, y_train_reg)
 lasso_pred = lasso.predict(X_test_reg_scaled)
 lasso_mae = mean_absolute_error(y_test_reg, lasso_pred)
@@ -158,9 +158,11 @@ model_clf.fit(X_train_clf_scaled, y_train_clf)
 y_pred_clf = model_clf.predict(X_test_clf_scaled)
 
 accuracy = accuracy_score(y_test_clf, y_pred_clf)
+error_rate = 1 - accuracy
 
 print(f"\nрезультаты классификации:")
 print(f"accuracy: {accuracy:.3f}")
+print(f"error rate: {error_rate:.3f}")
 
 print()
 
