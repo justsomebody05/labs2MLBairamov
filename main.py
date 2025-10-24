@@ -9,8 +9,7 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix
 )
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler, PolynomialFeatures
-from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import LabelEncoder, StandardScaler, PolynomialFeatures
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -38,10 +37,8 @@ for feature in categorical_features:
     df[feature] = le.fit_transform(df[feature].astype(str)) 
     label_encoders[feature] = le
 
-features = ['HomePlanet', 'Destination', 'CryoSleep', 'VIP', 
-            'Age', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']
-
-X_reg = df[features]
+X_reg = df[['HomePlanet', 'Destination', 'CryoSleep', 'VIP', 
+            'Age', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']]
 y_reg = df['RoomService']
 X_train_reg, X_test_reg, y_train_reg, y_test_reg = train_test_split(
     X_reg, y_reg, test_size=0.2, random_state=42
@@ -71,28 +68,6 @@ print(f"MAE:  {mae:.2f}")
 
 print()
 
-plt.figure(figsize=(6, 5))
-sns.scatterplot(x=y_test_reg, y=y_pred_reg, alpha=0.6, color='royalblue', edgecolor='white')
-plt.plot([y_test_reg.min(), y_test_reg.max()],
-         [y_test_reg.min(), y_test_reg.max()],
-         color='red', linestyle='--', lw=2)
-plt.title("Сравнение реальных и предсказанных значений (RoomService)")
-plt.xlabel("Истинные значения")
-plt.ylabel("Предсказанные значения")
-plt.grid(alpha=0.3)
-plt.tight_layout()
-plt.show()
-
-residuals = y_test_reg - y_pred_reg
-plt.figure(figsize=(6, 4))
-sns.histplot(residuals, kde=True, color='darkorange', bins=30)
-plt.title("Распределение ошибок предсказания (residuals)")
-plt.xlabel("Ошибка (y_true - y_pred)")
-plt.ylabel("Количество наблюдений")
-plt.grid(alpha=0.3)
-plt.tight_layout()
-plt.show()
-
 poly = PolynomialFeatures(degree=2)
 X_train_poly = poly.fit_transform(X_train_reg_scaled)
 X_test_poly = poly.transform(X_test_reg_scaled)
@@ -103,10 +78,12 @@ y_pred_poly = poly_model.predict(X_test_poly)
 
 mse_poly = mean_squared_error(y_test_reg, y_pred_poly)
 mae_poly = mean_absolute_error(y_test_reg, y_pred_poly)
+rmse_poly = np.sqrt(mse_poly)
 
-print(f"\nполиномиальная регрессия (degree=2):")
+print(f"\nполиномиальная регрессия (2ая степень):")
 print(f"MSE: {mse_poly:.2f}")
 print(f"MAE: {mae_poly:.2f}")
+print(f"RMSE: {rmse_poly:.2f}")
 
 print()
 
@@ -137,7 +114,8 @@ print(f"lasso MSE:  {lasso_mse:.2f}")
 
 print()
 
-X_clf = df[features]
+X_clf = df[['HomePlanet', 'Destination', 'CryoSleep', 'VIP', 
+            'Age', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']]
 y_clf = df['Transported']
 
 X_train_clf, X_test_clf, y_train_clf, y_test_clf = train_test_split(
@@ -171,10 +149,8 @@ print(classification_report(y_test_clf, y_pred_clf))
 
 cm = confusion_matrix(y_test_clf, y_pred_clf)
 plt.figure(figsize=(6, 4))
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
-            xticklabels=['False', 'True'], 
-            yticklabels=['False', 'True'])
-plt.title('Confusion Matrix - Transported Prediction')
+sns.heatmap(cm, annot=True, fmt='d', cmap='bwr')
+plt.title('Confusion Matrix')
 plt.xlabel('Predicted Label')
 plt.ylabel('True Label')
 plt.tight_layout()
